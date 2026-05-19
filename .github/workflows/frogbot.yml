@@ -1,7 +1,7 @@
-name: Frogbot Security Scan
+name: "Frogbot Security Scan"
 
 on:
-  pull_request_target:
+  pull_request_target: 
     types: [opened, synchronize]
   push:
     branches:
@@ -22,7 +22,7 @@ jobs:
       matrix:
         branch: ["main"]
     steps:
-      - uses: jfrog/frogbot@v3
+      - uses: jfrog/frogbot@v2
         env:
           JF_URL: ${{ secrets.JF_URL }}
           JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
