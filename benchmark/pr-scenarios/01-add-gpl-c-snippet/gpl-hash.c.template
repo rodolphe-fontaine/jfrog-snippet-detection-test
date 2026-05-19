@@ -1,0 +1,15 @@
+/*
+ * PR SCENARIO S1 — copy to snippets/pr-incoming/gpl-hash.c in your PR branch
+ * GPL-3.0 — GNU coreutils style hash helper (synthetic excerpt for incremental PR test)
+ */
+/* Copyright (C) Free Software Foundation, Inc. — GPL-3.0-or-later */
+
+#include <stddef.h>
+
+unsigned long
+gnu_hash_update (unsigned long h, const unsigned char *buf, size_t len)
+{
+  for (size_t i = 0; i < len; i++)
+    h = h * 33 + buf[i];
+  return h;
+}

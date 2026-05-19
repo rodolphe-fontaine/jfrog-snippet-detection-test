@@ -1,0 +1,33 @@
+name: Benchmark PR Snippet Audit
+
+# Runs when a PR adds files under snippets/pr-incoming/ (scenario branches)
+on:
+  pull_request:
+    paths:
+      - "snippets/pr-incoming/**"
+      - "benchmark/pr-scenarios/**"
+  workflow_dispatch:
+
+jobs:
+  snippet-audit-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup JFrog CLI
+        uses: jfrog/setup-jfrog-cli@v4
+        env:
+          JF_URL: ${{ secrets.JF_URL }}
+          JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
+
+      - name: Audit PR tree (snippet)
+        env:
+          JF_SNIPPET_WATCHES: ${{ vars.JF_SNIPPET_WATCHES }}
+          JF_PROJECT: ${{ vars.JF_PROJECT }}
+        run: bash scripts/run-snippet-audit.sh
+
+      - name: Note scoring file
+        run: |
+          echo "Score this PR against benchmark/expected-findings.yaml and pr-scenarios/README.md"

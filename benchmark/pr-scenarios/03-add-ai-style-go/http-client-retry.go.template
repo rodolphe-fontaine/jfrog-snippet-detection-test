@@ -1,0 +1,28 @@
+// PR SCENARIO S3 — copy to snippets/pr-incoming/http-client-retry.go
+package incoming
+
+import (
+	"context"
+	"time"
+)
+
+func DoWithJitter(ctx context.Context, attempts int, base time.Duration, fn func() error) error {
+	var lastErr error
+	delay := base
+	for i := 0; i < attempts; i++ {
+		lastErr = fn()
+		if lastErr == nil {
+			return nil
+		}
+		if i+1 == attempts {
+			return lastErr
+		}
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-time.After(delay):
+		}
+		delay = delay + delay/2
+	}
+	return nil
+}

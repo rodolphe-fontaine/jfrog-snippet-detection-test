@@ -1,0 +1,207 @@
+# Ground truth for JFrog Snippet Detection benchmark runs.
+# Scoring: compare CLI SBOM + license table and Xray Scans List against these rows.
+#
+# Docs: https://docs.jfrog.com/security/docs/snippet-detection
+# Run:  jf audit --sca --sbom --static-sca --snippet --watches=<watch>
+
+version: 1
+product: jfrog-snippet-detection
+
+# Declared package dependencies (package-level SCA — should NOT be counted as snippets)
+declared_dependencies:
+  - name: lodash
+    version: "4.17.21"
+    expect_snippet: false
+    note: "Declared in package.json; distinct from snippets/exact/lodash-debounce.cjs"
+  - name: express
+    version: "4.21.2"
+    expect_snippet: false
+  - name: commons-lang3
+    version: "3.14.0"
+    expect_snippet: false
+    note: "Declared in pom.xml; distinct from snippets/exact/commons-lang-strip.java"
+
+cases:
+  - id: lodash-debounce-exact
+    path: snippets/exact/lodash-debounce.cjs
+    tier: exact
+    language: javascript
+    origin:
+      repository: lodash/lodash
+      license: MIT
+    expect:
+      detected: true
+      match_granularity: function
+      fields:
+        - source_repository
+        - license
+        - confidence_score
+      license_policy_risk: low
+
+  - id: ffmpeg-avstring-exact
+    path: snippets/exact/ffmpeg-avstring.c
+    tier: exact
+    language: c
+    origin:
+      repository: ffmpeg/ffmpeg
+      license: LGPL-2.1-or-later
+    expect:
+      detected: true
+      match_granularity: function
+      fields:
+        - source_repository
+        - license
+        - vulnerabilities
+        - confidence_score
+      license_policy_risk: high
+      cli_license_table: true
+
+  - id: lodash-merge-refactored
+    path: snippets/refactored/deep-merge.js
+    tier: refactored
+    language: javascript
+    origin:
+      repository: lodash/lodash
+      license: MIT
+    expect:
+      detected: likely
+      match_granularity: function
+      note: "Renamed symbols; semantic fingerprint should still match merge logic"
+
+  - id: cpython-urllib-parse-partial
+    path: snippets/partial/urllib-parse.py
+    tier: partial
+    language: python
+    origin:
+      repository: python/cpython
+      license: PSF-2.0
+    expect:
+      detected: likely
+      match_granularity: function
+      note: "Subset of urllib.parse ParseResult helpers"
+
+  - id: go-http-retry-ai-style
+    path: snippets/ai-style/http-retry.go
+    tier: ai_style
+    language: go
+    origin:
+      repository: cenkalti/backoff
+      license: MIT
+    expect:
+      detected: uncertain
+      match_granularity: function
+      note: "Rewritten backoff; tests semantic matching beyond surface text"
+
+  - id: first-party-debounce-negative
+    path: src/lib/debounce.js
+    tier: negative_control
+    language: javascript
+    origin: null
+    expect:
+      detected: false
+      note: "Similar behavior to lodash debounce but rewritten; measures false positives"
+
+  - id: first-party-levenshtein-negative
+    path: src/lib/levenshtein.js
+    tier: negative_control
+    language: javascript
+    origin: null
+    expect:
+      detected: false
+
+  - id: commons-lang-strip-exact
+    path: snippets/exact/commons-lang-strip.java
+    tier: exact
+    language: java
+    origin:
+      repository: apache/commons-lang
+      license: Apache-2.0
+    expect:
+      detected: true
+      match_granularity: function
+      license_policy_risk: low
+
+  - id: guava-preconditions-refactored
+    path: snippets/refactored/guava-preconditions.java
+    tier: refactored
+    language: java
+    origin:
+      repository: google/guava
+      license: Apache-2.0
+    expect:
+      detected: likely
+      match_granularity: function
+
+  - id: gpl-classpath-uri-partial
+    path: snippets/partial/gpl-classpath-uri.java
+    tier: partial
+    language: java
+    origin:
+      repository: classpath/classpath
+      license: GPL-2.0-or-later
+    expect:
+      detected: likely
+      license_policy_risk: high
+      cli_license_table: true
+
+  - id: gpl-coreutils-basename-exact
+    path: snippets/exact/gpl-coreutils-basename.c
+    tier: exact
+    language: c
+    origin:
+      repository: coreutils/coreutils
+      license: GPL-3.0-or-later
+    expect:
+      detected: true
+      license_policy_risk: high
+      cli_license_table: true
+
+  - id: agpl-ghostscript-path-exact
+    path: snippets/exact/agpl-ghostscript-path.c
+    tier: exact
+    language: c
+    origin:
+      repository: ArtifexSoftware/ghostpdl
+      license: AGPL-3.0
+    expect:
+      detected: true
+      license_policy_risk: critical
+      cli_license_table: true
+      note: "Strong copyleft AGPL — policy watch should flag"
+
+  - id: first-party-java-config-negative
+    path: src/main/java/com/snippetbench/ConfigLoader.java
+    tier: negative_control
+    language: java
+    origin: null
+    expect:
+      detected: false
+      note: "Uses declared commons-lang3 only"
+
+pr_scenarios:
+  - id: S1
+    template: benchmark/pr-scenarios/01-add-gpl-c-snippet/gpl-hash.c.template
+    deploy_to: snippets/pr-incoming/gpl-hash.c
+    expect_new_finding: GPL-3.0-or-later
+  - id: S2
+    template: benchmark/pr-scenarios/02-add-java-commons-excerpt/commons-contains.java.template
+    deploy_to: snippets/pr-incoming/commons-contains.java
+    expect_new_finding: apache/commons-lang
+  - id: S3
+    template: benchmark/pr-scenarios/03-add-ai-style-go/http-client-retry.go.template
+    deploy_to: snippets/pr-incoming/http-client-retry.go
+    expect_new_finding: uncertain
+  - id: S4
+    template: benchmark/pr-scenarios/04-negative-first-party/slugify.js.template
+    deploy_to: src/lib/slugify.js
+    expect_new_finding: none
+
+scoring:
+  precision: "true_positives / (true_positives + false_positives)"
+  recall: "true_positives / (true_positives + false_negatives)"
+  tiers:
+    exact: "must detect with high confidence"
+    refactored: "should detect via semantic fingerprint"
+    partial: "should detect at least one function match"
+    ai_style: "optional stretch goal"
+    negative_control: "must not report as snippet component"

@@ -1,0 +1,25 @@
+/*
+ * PR SCENARIO S2 — copy to snippets/pr-incoming/commons-contains.java
+ * Apache Commons Lang containsAny excerpt (Apache-2.0)
+ */
+public final class CommonsContainsIncoming {
+  public static boolean containsAny(CharSequence cs, char... searchChars) {
+    if (isEmpty(cs) || searchChars.length == 0) {
+      return false;
+    }
+    int csLen = cs.length();
+    for (int i = 0; i < csLen; i++) {
+      char ch = cs.charAt(i);
+      for (char searchChar : searchChars) {
+        if (ch == searchChar) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private static boolean isEmpty(CharSequence cs) {
+    return cs == null || cs.length() == 0;
+  }
+}

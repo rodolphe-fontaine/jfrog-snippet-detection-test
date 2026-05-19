@@ -21,6 +21,3 @@ export function mergeDeep(target, source) {
 
   return output;
 }
-
-// smoke test
-console.log(mergeDeep({ a: { b: 1 } }, { a: { c: 2 } }));

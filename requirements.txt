@@ -1,0 +1,2 @@
+# Declared for static SCA / Frogbot project detection (no runtime install required).
+# Snippet fixtures live under snippets/partial/*.py

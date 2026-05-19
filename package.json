@@ -1,10 +1,20 @@
 {
   "name": "jfrog-snippet-detection-test",
   "version": "1.0.0",
-  "description": "Small repo to test JFrog snippet detection",
+  "description": "Benchmark harness for JFrog Snippet Detection (function-level semantic fingerprinting)",
   "type": "module",
+  "main": "src/server.js",
   "scripts": {
-    "test": "node src/debounce.js && node src/merge.js && node src/levenshtein.js"
+    "start": "node src/server.js",
+    "test": "node --test src/lib/*.test.js",
+    "audit:snippet": "bash scripts/run-snippet-audit.sh"
   },
-  "license": "UNLICENSED"
+  "dependencies": {
+    "express": "^4.21.2",
+    "lodash": "^4.17.21"
+  },
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18"
+  }
 }

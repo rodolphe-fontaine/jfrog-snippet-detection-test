@@ -1,7 +1,7 @@
-name: "Frogbot Security Scan"
+name: Frogbot Security Scan
 
 on:
-  pull_request_target: 
+  pull_request_target:
     types: [opened, synchronize]
   push:
     branches:
@@ -22,9 +22,11 @@ jobs:
       matrix:
         branch: ["main"]
     steps:
-      - uses: jfrog/frogbot@v2
+      - uses: jfrog/frogbot@v3
         env:
           JF_URL: ${{ secrets.JF_URL }}
           JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
           JF_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JF_GIT_BASE_BRANCH: ${{ matrix.branch }}
+          # Use platform Git Repository config (Administration > Xray > Indexed Resources)
+          JF_USE_CONFIG_PROFILE: "true"
