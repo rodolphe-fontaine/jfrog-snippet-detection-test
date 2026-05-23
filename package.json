@@ -10,7 +10,7 @@
     "audit:snippet": "bash scripts/run-snippet-audit.sh"
   },
   "dependencies": {
-    "express": "^4.21.2",
+    "express": "^4.22.2",
     "lodash": "^4.17.21"
   },
   "license": "UNLICENSED",
