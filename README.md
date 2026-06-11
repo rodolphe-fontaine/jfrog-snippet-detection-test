@@ -38,12 +38,11 @@ benchmark/
 
 ## CI workflows
 
-This repo uses [Frogbot V3](https://docs.jfrog.com/security/docs/github) (latest) plus CLI-based snippet audits.
+This repo uses [Frogbot V3](https://docs.jfrog.com/security/docs/github) (version from `FROGBOT_VERSION` variable) plus CLI-based snippet audits.
 
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
-| `frogbot-scan-pull-request.yml` | PR opened/updated | Frogbot scan on pull requests; results in GitHub Security |
-| `frogbot-scan-repository.yml` | Push to `main`, daily cron, manual | Full-repo Frogbot scan; can open fix PRs |
+| `frogbot-scan.yml` | Push to `main`, PR, manual | Unified Frogbot scan (repository or pull request) |
 | `snippet-audit.yml` | Push/PR/manual | `jf audit --snippet` (JFrog CLI **2.104.1** pinned) |
 | `benchmark-pr-audit.yml` | PR touching `snippets/pr-incoming/**` | Targeted snippet audit for PR benchmark scenarios |
 
@@ -56,6 +55,15 @@ This repo uses [Frogbot V3](https://docs.jfrog.com/security/docs/github) (latest
 | `JF_URL` | Your JFrog Platform URL |
 | `JF_ACCESS_TOKEN` | JFrog access token (scan scope; PR creation if auto-fix is enabled) |
 
+**Variables** (`Settings > Secrets and variables > Actions > Variables`):
+
+| Variable | Value | Required |
+|----------|-------|----------|
+| `FROGBOT_VERSION` | Frogbot release to download (e.g. `3.2.1`) | Yes |
+| `JF_URL` | JFrog Platform URL (optional if set as secret only) | No |
+| `JF_SNIPPET_WATCHES` | Override watch for `jf audit` (default: `minimum-to-respect`) | No |
+| `JF_PROJECT` | JFrog project key for `jf audit` (instead of watch) | No |
+
 `GITHUB_TOKEN` is provided automatically by Actions — no separate `JF_GIT_TOKEN` secret is required.
 
 **Workflow permissions** (`Settings > Actions > General`):
@@ -66,7 +74,7 @@ This repo uses [Frogbot V3](https://docs.jfrog.com/security/docs/github) (latest
 **Public vs private repository**
 
 - **Private repo**: Frogbot runs with the secrets above; no extra setup.
-- **Public repo** (PRs from forks): create a GitHub Environment named `frogbot` with at least one reviewer, then uncomment `environment: frogbot` in `frogbot-scan-pull-request.yml`. This lets Frogbot access secrets for fork PRs after approval.
+- **Public repo** (PRs from forks): create a GitHub Environment named `frogbot` with at least one reviewer if you need gated secret access for fork PRs.
 
 ### JFrog Platform prerequisites
 

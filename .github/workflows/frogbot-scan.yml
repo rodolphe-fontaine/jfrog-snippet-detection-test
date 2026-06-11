@@ -1,0 +1,48 @@
+name: Frogbot Scan
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request_target:
+    types: [opened, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: write
+  security-events: write
+
+jobs:
+  frogbot-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Frogbot binary
+        run: |
+          mkdir -p "${{ runner.temp }}/frogbot"
+          curl -fsSL "https://releases.jfrog.io/artifactory/frogbot/v3/${FROGBOT_VERSION}/frogbot-linux-amd64/frogbot" \
+            -o "${{ runner.temp }}/frogbot/frogbot"
+          chmod +x "${{ runner.temp }}/frogbot/frogbot"
+          "${{ runner.temp }}/frogbot/frogbot" --version
+        env:
+          FROGBOT_VERSION: ${{ vars.FROGBOT_VERSION || '3.2.1' }}
+
+      - name: Run Frogbot scan
+        run: |
+          if [ -n "$JF_GIT_PULL_REQUEST_ID" ]; then
+            "${{ runner.temp }}/frogbot/frogbot" scan-pull-request
+          else
+            "${{ runner.temp }}/frogbot/frogbot" scan-repository
+          fi
+        env:
+          JFROG_CLI_LOG_LEVEL: DEBUG
+          JF_URL: ${{ secrets.JF_URL }}
+          JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
+          JF_USE_CONFIG_PROFILE: "true"
+          JF_GIT_PROVIDER: github
+          JF_GIT_OWNER: ${{ github.repository_owner }}
+          JF_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JF_GIT_REPO: ${{ github.event.repository.name }}
+          JF_GIT_BASE_BRANCH: main
+          JF_GIT_PULL_REQUEST_ID: ${{ github.event.pull_request.number }}
