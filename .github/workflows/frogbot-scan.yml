@@ -21,7 +21,7 @@ jobs:
       - name: Download Frogbot binary
         run: |
           mkdir -p "${{ runner.temp }}/frogbot"
-          curl -fsSL "https://releases.jfrog.io/artifactory/frogbot/v3/${FROGBOT_VERSION}/frogbot-linux-amd64/frogbot" \
+          curl -fsSL "https://releases.jfrog.io/artifactory/frogbot/v3/${{ vars.FROGBOT_VERSION }}/frogbot-linux-amd64/frogbot" \
             -o "${{ runner.temp }}/frogbot/frogbot"
           chmod +x "${{ runner.temp }}/frogbot/frogbot"
           "${{ runner.temp }}/frogbot/frogbot" --version
