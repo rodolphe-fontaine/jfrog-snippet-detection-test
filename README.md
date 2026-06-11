@@ -1,6 +1,9 @@
 # JFrog Snippet Detection Benchmark
 
 Small but realistic **multi-package API** used to benchmark [JFrog Snippet Detection](https://docs.jfrog.com/security/docs/snippet-detection): function-level semantic fingerprinting against the **JFrog Catalog**, with CLI output showing **license violations** and an **SBOM enriched with snippet matches**.
+ 
+ gnnnananan 
+
 
 This is **not** production code.
 
