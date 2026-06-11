@@ -18,10 +18,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
       - name: Download Frogbot binary
         run: |
           mkdir -p "${{ runner.temp }}/frogbot"
-          curl -fsSL "https://releases.jfrog.io/artifactory/frogbot/v3/${{ vars.FROGBOT_VERSION }}/frogbot-linux-amd64/frogbot" \
+          curl -fsSL "https://releases.jfrog.io/artifactory/frogbot/v3/${FROGBOT_VERSION}/frogbot-linux-amd64/frogbot" \
             -o "${{ runner.temp }}/frogbot/frogbot"
           chmod +x "${{ runner.temp }}/frogbot/frogbot"
           "${{ runner.temp }}/frogbot/frogbot" --version
@@ -29,6 +35,7 @@ jobs:
           FROGBOT_VERSION: ${{ vars.FROGBOT_VERSION || '3.2.1' }}
 
       - name: Run Frogbot scan
+        working-directory: ${{ github.workspace }}
         run: |
           if [ -n "$JF_GIT_PULL_REQUEST_ID" ]; then
             "${{ runner.temp }}/frogbot/frogbot" scan-pull-request
@@ -40,6 +47,9 @@ jobs:
           JF_URL: ${{ secrets.JF_URL }}
           JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
           JF_USE_CONFIG_PROFILE: "true"
+          JF_WATCHES: ${{ vars.JF_SNIPPET_WATCHES || 'minimum-to-respect' }}
+          # Default *test* excludes this repo (name contains "test") — use narrower patterns.
+          JF_PATH_EXCLUSIONS: "*git*;*node_modules*;*target*;*venv*;dist;**/test/**;**/*.test.js"
           JF_GIT_PROVIDER: github
           JF_GIT_OWNER: ${{ github.repository_owner }}
           JF_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
