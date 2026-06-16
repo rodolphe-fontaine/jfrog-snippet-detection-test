@@ -6,6 +6,7 @@ Intentional OSS copies for benchmarking [JFrog Snippet Detection](https://docs.j
 |------|------|--------|--------------|
 | **exact** | `exact/lodash-debounce.cjs` | lodash/lodash | MIT (low) |
 | **exact** | `exact/ffmpeg-avstring.c` | ffmpeg/ffmpeg | LGPL (high) |
+| **exact** | `exact/ffmpeg-adeclick.c` | ffmpeg/ffmpeg (libavfilter/af_adeclick.c) | LGPL (high) |
 | **exact** | `exact/commons-lang-strip.java` | apache/commons-lang | Apache-2.0 (low) |
 | **exact** | `exact/gpl-coreutils-basename.c` | coreutils/coreutils | GPL-3.0+ (high) |
 | **exact** | `exact/agpl-ghostscript-path.c` | ArtifexSoftware/ghostpdl | AGPL-3.0 (critical) |

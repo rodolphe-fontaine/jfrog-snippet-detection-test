@@ -56,6 +56,26 @@ cases:
       license_policy_risk: high
       cli_license_table: true
 
+  - id: ffmpeg-adeclick-exact
+    path: snippets/exact/ffmpeg-adeclick.c
+    tier: exact
+    language: c
+    origin:
+      repository: ffmpeg/ffmpeg
+      source_path: libavfilter/af_adeclick.c
+      license: LGPL-2.1-or-later
+    expect:
+      detected: true
+      match_granularity: function
+      fields:
+        - source_repository
+        - license
+        - vulnerabilities
+        - confidence_score
+      license_policy_risk: high
+      cli_license_table: true
+      note: "adeclick/adeclip audio filters; verbatim from FFmpeg n8.1"
+
   - id: lodash-merge-refactored
     path: snippets/refactored/deep-merge.js
     tier: refactored
