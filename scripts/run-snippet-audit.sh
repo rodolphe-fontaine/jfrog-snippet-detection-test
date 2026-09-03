@@ -14,12 +14,15 @@ if [[ -z "$WATCHES" ]]; then
 fi
 PROJECT="${JF_PROJECT:-}"
 
+# Default *test* skips this repo (name contains "test") — use narrower patterns.
+EXCLUSIONS="${JF_PATH_EXCLUSIONS:-*git*;*node_modules*;*target*;*venv*;dist;**/test/**;**/*.test.js;package_list;sbom.json}"
+
 if ! command -v jf >/dev/null 2>&1; then
   echo "error: jf CLI not found. Install from https://docs.jfrog.com/docs/cli" >&2
   exit 1
 fi
 
-ARGS=(audit --sca --sbom --static-sca --snippet)
+ARGS=(audit --sca --sbom --static-sca --snippet --exclusions="$EXCLUSIONS")
 
 if [[ -n "$PROJECT" ]]; then
   ARGS+=(--project="$PROJECT")

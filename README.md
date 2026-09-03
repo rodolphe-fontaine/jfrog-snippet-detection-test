@@ -90,4 +90,4 @@ CLI and CI audits use `--watches=minimum-to-respect` by default (override with `
 
 Frogbot workflows set `JF_USE_CONFIG_PROFILE=true` so scans use the Git Repository profile defined in the JFrog Platform UI (not a local `frogbot-config.yml`).
 
-Because this repository name contains `test`, Frogbot's default path exclusion `*test*` would skip the entire tree. The workflow overrides `JF_PATH_EXCLUSIONS` with narrower test-file patterns and sets `JF_WATCHES=minimum-to-respect`.
+Because this repository name contains `test`, the default path exclusion `*test*` would skip the entire tree. Frogbot workflows set `JF_PATH_EXCLUSIONS`; `scripts/run-snippet-audit.sh` passes the same patterns via `jf audit --exclusions`.

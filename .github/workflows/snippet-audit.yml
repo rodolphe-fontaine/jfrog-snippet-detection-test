@@ -30,4 +30,5 @@ jobs:
         env:
           JF_SNIPPET_WATCHES: ${{ vars.JF_SNIPPET_WATCHES || 'minimum-to-respect' }}
           JF_PROJECT: ${{ vars.JF_PROJECT }}
+          JF_PATH_EXCLUSIONS: "*git*;*node_modules*;*target*;*venv*;dist;**/test/**;**/*.test.js;package_list;sbom.json"
         run: bash scripts/run-snippet-audit.sh
