@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Reproducible local/CI snippet benchmark via JFrog CLI.
-# Prerequisites: jf CLI 2.104.1 (CI-pinned), Unified Security + Catalog on your JPD.
+# Prerequisites: latest jf CLI (CI uses version: latest), Unified Security + Catalog on your JPD.
 # Docs: https://docs.jfrog.com/security/docs/run-snippet-detection
 
 set -euo pipefail

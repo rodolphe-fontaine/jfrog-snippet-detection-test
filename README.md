@@ -41,12 +41,12 @@ benchmark/
 
 ## CI workflows
 
-This repo uses [Frogbot V3](https://docs.jfrog.com/security/docs/github) (version from `FROGBOT_VERSION` variable) plus CLI-based snippet audits.
+This repo uses [Frogbot V3](https://docs.jfrog.com/security/docs/github) (`version: latest`) and the JFrog CLI (`version: latest` via `setup-jfrog-cli@v4`) for snippet audits.
 
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
 | `frogbot-scan.yml` | Push to `main`, PR, manual | Unified Frogbot scan (repository or pull request) |
-| `snippet-audit.yml` | Push/PR/manual | `jf audit --snippet` (JFrog CLI **2.104.1** pinned) |
+| `snippet-audit.yml` | Push/PR/manual | `jf audit --snippet` (latest JFrog CLI) |
 | `benchmark-pr-audit.yml` | PR touching `snippets/pr-incoming/**` | Targeted snippet audit for PR benchmark scenarios |
 
 ### GitHub prerequisites
@@ -62,7 +62,6 @@ This repo uses [Frogbot V3](https://docs.jfrog.com/security/docs/github) (versio
 
 | Variable | Value | Required |
 |----------|-------|----------|
-| `FROGBOT_VERSION` | Frogbot release to download (e.g. `3.2.1`) | Yes |
 | `JF_URL` | JFrog Platform URL (optional if set as secret only) | No |
 | `JF_SNIPPET_WATCHES` | Override watch for `jf audit` (default: `minimum-to-respect`) | No |
 | `JF_PROJECT` | JFrog project key for `jf audit` (instead of watch) | No |

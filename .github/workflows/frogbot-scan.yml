@@ -24,24 +24,9 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
-      - name: Download Frogbot binary
-        run: |
-          mkdir -p "${{ runner.temp }}/frogbot"
-          curl -fsSL "https://releases.jfrog.io/artifactory/frogbot/v3/${FROGBOT_VERSION}/frogbot-linux-amd64/frogbot" \
-            -o "${{ runner.temp }}/frogbot/frogbot"
-          chmod +x "${{ runner.temp }}/frogbot/frogbot"
-          "${{ runner.temp }}/frogbot/frogbot" --version
-        env:
-          FROGBOT_VERSION: ${{ vars.FROGBOT_VERSION || '3.2.1' }}
-
-      - name: Run Frogbot scan
-        working-directory: ${{ github.workspace }}
-        run: |
-          if [ -n "$JF_GIT_PULL_REQUEST_ID" ]; then
-            "${{ runner.temp }}/frogbot/frogbot" scan-pull-request
-          else
-            "${{ runner.temp }}/frogbot/frogbot" scan-repository
-          fi
+      - uses: jfrog/frogbot@v3
+        with:
+          version: latest
         env:
           JFROG_CLI_LOG_LEVEL: DEBUG
           JF_URL: ${{ secrets.JF_URL }}
