@@ -5,3 +5,7 @@ node_modules/
 dist/
 coverage/
 target/
+
+# Local scan artifacts — not package manifests
+sbom.json
+package_list

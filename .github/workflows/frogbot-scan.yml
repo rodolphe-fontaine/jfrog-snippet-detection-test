@@ -49,7 +49,7 @@ jobs:
           JF_USE_CONFIG_PROFILE: "true"
           JF_WATCHES: ${{ vars.JF_SNIPPET_WATCHES || 'minimum-to-respect' }}
           # Default *test* excludes this repo (name contains "test") — use narrower patterns.
-          JF_PATH_EXCLUSIONS: "*git*;*node_modules*;*target*;*venv*;dist;**/test/**;**/*.test.js"
+          JF_PATH_EXCLUSIONS: "*git*;*node_modules*;*target*;*venv*;dist;**/test/**;**/*.test.js;package_list;sbom.json"
           JF_GIT_PROVIDER: github
           JF_GIT_OWNER: ${{ github.repository_owner }}
           JF_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
